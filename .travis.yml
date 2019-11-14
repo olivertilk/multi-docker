@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t olivertilk/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true olivertilk/react-test npm run test
+
+after_sucess:
+  - docker build -t olivertilk/multi-docker-client ./client
+  - docker build -t olivertilk/multi-docker-nginx ./nginx
+  - docker build -t olivertilk/multi-docker-server ./server
+  - docker build -t olivertilk/multi-docker-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push built production images to the docker hub repository
+  - docker push olivertilk/multi-docker-client
+  - docker push olivertilk/multi-docker-nginx
+  - docker push olivertilk/multi-docker-server
+  - docker push olivertilk/multi-docker-worker
