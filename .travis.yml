@@ -8,7 +8,7 @@ before_install:
 script:
   - docker run -e CI=true olivertilk/react-test npm run test
 
-after_sucess:
+after_success:
   - docker build -t olivertilk/multi-docker-client ./client
   - docker build -t olivertilk/multi-docker-nginx ./nginx
   - docker build -t olivertilk/multi-docker-server ./server
